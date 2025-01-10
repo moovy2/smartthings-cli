@@ -1,12 +1,13 @@
 import log4js from '@log4js-node/log4js-api'
 import { Command, Flags, Interfaces } from '@oclif/core'
+import { ExitError } from '@oclif/core/lib/errors'
 import { Input } from '@oclif/core/lib/interfaces'
 import { CLIConfig, loadConfig, Profile } from './cli-config'
 import { outputFlags } from './output-builder'
 import { DefaultTableGenerator, TableGenerator } from './table-generator'
 
 
-export interface Loggable {
+export type Loggable = {
 	readonly logger: log4js.Logger
 }
 
@@ -14,7 +15,7 @@ export interface Loggable {
  * An interface version of SmartThingsCommand to make its contract easier to mix with other
  * interfaces and to limit what we need to mock for tests.
  */
-export interface SmartThingsCommandInterface extends Loggable {
+export type SmartThingsCommandInterface = Loggable & Pick<Command, 'exit' | 'logToStderr'> & {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	readonly flags: Interfaces.OutputFlags<any>
 
@@ -59,7 +60,10 @@ export interface SmartThingsCommandInterface extends Loggable {
 	 */
 	booleanConfigValue(keyName: string, defaultValue?: boolean): boolean
 
-	exit(code?: number): void
+	/**
+	 * This method is called when the user has decided to not complete a command.
+	 */
+	cancel(message?: string): never
 }
 
 /**
@@ -210,14 +214,9 @@ export abstract class SmartThingsCommand<T extends InputFlags> extends Command i
 		this._tableGenerator = new DefaultTableGenerator(groupRows)
 	}
 
-	/**
-	 * This method is called when the user has decided to not complete a command.
-	 */
-	abort(message?: string): void {
-		if (message) {
-			this.log(message)
-		}
+	cancel(message?: string): never {
+		this.log(message ?? 'Action canceled')
 
-		this.exit(0)
+		throw new ExitError(0)
 	}
 }

@@ -21,7 +21,7 @@ export enum LogLevel {
 	PRINT = 1000,
 }
 
-export interface LiveLogMessage {
+export type LiveLogMessage = {
 	/*
 	 * The ISO formatted Local timestamp
 	 */
@@ -61,7 +61,7 @@ export enum DriverInfoStatus {
 	Unknown = 'unknown',
 }
 
-export interface DriverInfo {
+export type DriverInfo = {
 	/**
 	 * A UUID for this driver
 	 * */
@@ -189,7 +189,7 @@ function scrubAuthInfo(obj: unknown): string {
  */
 export type HostVerifier = (cert: PeerCertificate) => Promise<void | never>
 
-export interface LiveLogClientConfig {
+export type LiveLogClientConfig = {
 	/**
 	 * @example 192.168.0.1:9495
 	 */
@@ -217,20 +217,21 @@ export class LiveLogClient {
 	}
 
 	private async request(url: string, method: Method = 'GET'): Promise<AxiosResponse> {
-		const config = await this.config.authenticator.authenticate({
+		const authHeaders = await this.config.authenticator.authenticate()
+		const config = {
 			url: url,
 			method: method,
 			httpsAgent: new https.Agent({ rejectUnauthorized: false }),
 			timeout: this.config.timeout,
 			// eslint-disable-next-line @typescript-eslint/naming-convention
-			headers: { 'User-Agent': this.config.userAgent },
+			headers: { 'User-Agent': this.config.userAgent, ...authHeaders },
 			transitional: {
 				silentJSONParsing: true,
 				forcedJSONParsing: true,
 				// throw ETIMEDOUT error instead of generic ECONNABORTED on request timeouts
 				clarifyTimeoutError: true,
 			},
-		})
+		}
 
 		let response
 		try {

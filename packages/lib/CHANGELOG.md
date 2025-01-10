@@ -1,5 +1,107 @@
 # Change Log
 
+## 2.3.0
+
+### Minor Changes
+
+- [#619](https://github.com/SmartThingsCommunity/smartthings-cli/pull/619) [`032a231`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/032a2317825c55a063ec02171cbd4178314092f4) Thanks [@rossiam](https://github.com/rossiam)! - query user for organization in schema:update and schema:create commands
+
+### Patch Changes
+
+- [#622](https://github.com/SmartThingsCommunity/smartthings-cli/pull/622) [`b99e397`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/b99e3976ec87f241e0b2b800b36fa1b331f5a7a8) Thanks [@rossiam](https://github.com/rossiam)! - fix error when running invites:schema that could happen if user has a schema app without an organization
+
+## 2.2.5
+
+### Patch Changes
+
+- [#615](https://github.com/SmartThingsCommunity/smartthings-cli/pull/615) [`146c66f`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/146c66f98931cfcf714d9579e46eec4b57b1b66a) Thanks [@bflorian](https://github.com/bflorian)! - Allow port number in callback URLs of API_ONLY apps.
+
+## 2.2.4
+
+### Patch Changes
+
+- [#581](https://github.com/SmartThingsCommunity/smartthings-cli/pull/581) [`a9d6398`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/a9d6398634236462a232f94d2ec3f2b5ab1fe4fc) Thanks [@rossiam](https://github.com/rossiam)! - bump core SDK version
+
+## 2.2.3
+
+### Patch Changes
+
+- [#559](https://github.com/SmartThingsCommunity/smartthings-cli/pull/559) [`e75b122`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/e75b1223b108dc90fd320c8f70a77551887f8067) Thanks [@rossiam](https://github.com/rossiam)! - minor ux tweaks to new ST Schema Invites
+
+## 2.2.2
+
+### Patch Changes
+
+- [#546](https://github.com/SmartThingsCommunity/smartthings-cli/pull/546) [`33f6476`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/33f6476f1cfb04d021c6fa9d4c6b7aac4818b8d9) Thanks [@rossiam](https://github.com/rossiam)! - update axios and qs dependencies
+
+- [#549](https://github.com/SmartThingsCommunity/smartthings-cli/pull/549) [`60a9126`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/60a9126c1b844ba91cc84a5353c46a578469eadc) Thanks [@bflorian](https://github.com/bflorian)! - feat: added organizations to Schema CRUD commands
+
+## 2.2.1
+
+### Patch Changes
+
+- [#541](https://github.com/SmartThingsCommunity/smartthings-cli/pull/541) [`b865ad8`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/b865ad8c7752ed85aadcadd0c1c6da742f74f93f) Thanks [@rossiam](https://github.com/rossiam)! - Fixed cancel action on schema:create command when validation errors exist.
+
+- [#545](https://github.com/SmartThingsCommunity/smartthings-cli/pull/545) [`bcb0af5`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/bcb0af5b011043903d265b40ac381f1dc0ebcff6) Thanks [@rossiam](https://github.com/rossiam)! - fixed issue where ctrl-c wouldn't work while connecting
+
+## 2.2.0
+
+### Minor Changes
+
+- [#539](https://github.com/SmartThingsCommunity/smartthings-cli/pull/539) [`a427e34`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/a427e34467c56e221089a4aeee53a6894b590e2a) Thanks [@rossiam](https://github.com/rossiam)! - Miscellaneous updates to item-input module.
+
+## 2.1.1
+
+### Patch Changes
+
+- [#537](https://github.com/SmartThingsCommunity/smartthings-cli/pull/537) [`964fb60`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/964fb6099019c6d013dac12fbc09a5d5ecd04b89) Thanks [@bflorian](https://github.com/bflorian)! - chore: reverted minimum node version to 18.5.0
+
+## 2.1.0
+
+### Minor Changes
+
+- [#515](https://github.com/SmartThingsCommunity/smartthings-cli/pull/515) [`c391bb5`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/c391bb5387662db7b767d34434779d8e8cbaeb5e) Thanks [@rossiam](https://github.com/rossiam)! - add support for help text to item input definitions
+
+### Patch Changes
+
+- [#513](https://github.com/SmartThingsCommunity/smartthings-cli/pull/513) [`13167bd`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/13167bd407156731bfc8baf62a6deba10e2423b0) Thanks [@rossiam](https://github.com/rossiam)! - allow custom `listItems` in base `ChooseOptions`
+
+## 2.0.1
+
+### Patch Changes
+
+- [#509](https://github.com/SmartThingsCommunity/smartthings-cli/pull/509) [`9b9b398`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/9b9b398984fb9c51c112d3a11192f0ea5318c6d0) Thanks [@rossiam](https://github.com/rossiam)! - bump core SDK version
+
+## 2.0.0
+
+### Major Changes
+
+- [#497](https://github.com/SmartThingsCommunity/smartthings-cli/pull/497) [`7c64fea`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/7c64fea72ec3af69155e594bb30de0898e716281) Thanks [@rossiam](https://github.com/rossiam)! - back off axios version to last non-ESM version so library will still work with pkg tool
+
+- [#495](https://github.com/SmartThingsCommunity/smartthings-cli/pull/495) [`f7a3a23`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/f7a3a23c636de50d20f1b640e0c82496c8adcc40) Thanks [@rossiam](https://github.com/rossiam)! - updated core SDK version, axios and qs dependencies
+
+### Minor Changes
+
+- [#487](https://github.com/SmartThingsCommunity/smartthings-cli/pull/487) [`79da49f`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/79da49feaa09d0552cc0829f5e00873842e65944) Thanks [@rossiam](https://github.com/rossiam)! - add support for creating OAuth-In SmartApps via user Q&A
+
+## 1.1.0
+
+### Minor Changes
+
+- [#462](https://github.com/SmartThingsCommunity/smartthings-cli/pull/462) [`b03292d`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/b03292dffcab45dfc8b8fdb915ce5b198824e491) Thanks [@Sitlintac](https://github.com/Sitlintac)! - enable verbose flag when getting a single device
+
+  add helper method to get location and room names for a single item
+
+## 1.0.1
+
+### Patch Changes
+
+- [#448](https://github.com/SmartThingsCommunity/smartthings-cli/pull/448) [`c615772`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/c6157720531cb9383fcf74c4eea607cbf1971770) Thanks [@rossiam](https://github.com/rossiam)! - fixed error handling stdin when not run from the console
+
+- [#453](https://github.com/SmartThingsCommunity/smartthings-cli/pull/453) [`712476c`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/712476c0166c030ce94f04bf89a0893f00204bc1) Thanks [@rossiam](https://github.com/rossiam)! - \* Validate saved default values for hubs and channels before using them).
+  - Inform the user when a default value is used.
+  - Don't use default value for `edge:drivers:install` command.
+
 ## 1.0.0
 
 ### Patch Changes

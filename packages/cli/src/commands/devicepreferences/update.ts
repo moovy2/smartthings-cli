@@ -4,7 +4,8 @@ import { chooseDevicePreference, tableFieldDefinitions } from '../../lib/command
 
 
 export default class DevicePreferencesUpdateCommand extends APIOrganizationCommand<typeof DevicePreferencesUpdateCommand.flags> {
-	static description = 'update a device preference'
+	static description = 'update a device preference' +
+		this.apiDocsURL('updatePreferenceById')
 
 	static flags = {
 		...APIOrganizationCommand.flags,
@@ -17,8 +18,14 @@ export default class DevicePreferencesUpdateCommand extends APIOrganizationComma
 	}]
 
 	static examples = [
-		'$ smartthings devicepreferences:update -i dp.json                   # update a device preference with data from dp.json, select which preference from a list',
-		'$ smartthings devicepreferences:update -i dp.yaml my-preference-id  # update device preference my-preference-id with data from dp.yaml',
+		{
+			description: 'select a device preference from a list and update it with data from dp.json',
+			command: 'smartthings devicepreferences:update -i dp.json',
+		},
+		{
+			description: 'update specified device preference with data from dp.yaml',
+			command: 'smartthings devicepreferences:update -i dp.yaml motionSensitivity',
+		},
 	]
 
 	async run(): Promise<void> {

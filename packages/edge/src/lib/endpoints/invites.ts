@@ -1,14 +1,14 @@
 import { Endpoint, EndpointClient, EndpointClientConfig } from '@smartthings/core-sdk'
 
 
-export interface InvitationMetadata {
+export type InvitationMetadata = {
 	name: string
 	description: string
 	owner: string
 	termsUrl: string
 }
 
-export interface CreateInvitation {
+export type InvitationCreate = {
 	resource: {
 		root: {
 			service: 'core' | 'iam' | 'platform' | 'mdu' | 'developer'
@@ -28,12 +28,12 @@ export interface CreateInvitation {
 	expiration?: number
 }
 
-export interface Invitation extends CreateInvitation {
+export type Invitation = InvitationCreate & {
 	id: string
 	acceptUrl: string
 }
 
-export interface InvitationSummary {
+export type SchemaAppInvitationSummary = {
 	invitationId: string
 	acceptUrl: string
 }
@@ -44,7 +44,7 @@ export class InvitesEndpoint extends Endpoint {
 		super(new EndpointClient('invites', config))
 	}
 
-	public async create(invitation: CreateInvitation): Promise<InvitationSummary> {
+	public async create(invitation: InvitationCreate): Promise<SchemaAppInvitationSummary> {
 		return this.client.post('', invitation)
 	}
 

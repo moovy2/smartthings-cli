@@ -10,7 +10,7 @@ jest.mock('@smartthings/cli-lib', () => {
 
 	return {
 		...originalLib,
-		chooseOptionsWithDefaults: jest.fn(() => chooseOptionsDefaults),
+		chooseOptionsWithDefaults: jest.fn(() => chooseOptionsDefaults()),
 		stringTranslateToId: jest.fn(),
 		selectFromList: jest.fn(),
 		outputItemOrList: jest.fn(),
@@ -21,6 +21,7 @@ jest.mock('@smartthings/cli-lib', () => {
 		formatAndWriteItem: jest.fn(),
 		withLocation: jest.fn(),
 		withLocations: jest.fn(),
+		withLocationAndRoom: jest.fn(),
 		withLocationsAndRooms: jest.fn(),
 		yamlExists: jest.fn(),
 		chooseDevice: jest.fn(),
@@ -41,7 +42,7 @@ jest.spyOn(APICommand.prototype, 'client', 'get').mockReturnValue(new MockSmartT
  * Perform minimal stubbing required to get CLI commands running under jest
  */
 jest.spyOn(LoginAuthenticator.prototype, 'login').mockImplementation(() => Promise.resolve())
-jest.spyOn(LoginAuthenticator.prototype, 'authenticate').mockImplementation((requestConfig) => Promise.resolve(requestConfig));
+jest.spyOn(LoginAuthenticator.prototype, 'authenticate').mockImplementation(() => Promise.resolve({}));
 (global as { _credentialsFile?: string })._credentialsFile = 'credentials.json'
 
 /**

@@ -1,23 +1,23 @@
 import { SmartThingsClient, OrganizationResponse, CapabilityNamespace } from '@smartthings/core-sdk'
 
 
-export interface WithLocation {
+export type WithLocation = {
 	locationId?: string
 }
 
-export interface WithNamedLocation extends WithLocation {
+export type WithNamedLocation = WithLocation & {
 	location?: string
 }
 
-export interface WithRoom extends WithLocation {
+export type WithRoom = WithLocation & {
 	roomId?: string
 }
 
-export interface WithNamedRoom extends WithNamedLocation, WithRoom {
+export type WithNamedRoom = WithNamedLocation & WithRoom & {
 	room?: string
 }
 
-export interface WithOrganization {
+export type WithOrganization = {
 	organization?: string
 }
 
@@ -71,6 +71,9 @@ export const withLocationsAndRooms = async <T extends WithRoom>(client: SmartThi
 	})
 }
 
+export const withLocationAndRoom = async <T extends WithRoom>(client: SmartThingsClient, item: T): Promise<T & WithNamedRoom> =>
+	(await withLocationsAndRooms(client, [item]))[0]
+
 export async function forAllOrganizations<T>(
 		client: SmartThingsClient,
 		query: (orgClient: SmartThingsClient, org: OrganizationResponse) => Promise<T[]>): Promise<(T & WithOrganization)[]> {
@@ -92,6 +95,6 @@ export async function forAllNamespaces<T>(
 	return nestedItems.flat()
 }
 
-export interface WithLocales {
+export type WithLocales = {
 	locales?: string
 }

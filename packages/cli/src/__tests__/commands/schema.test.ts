@@ -1,12 +1,14 @@
 import { SchemaApp, SchemaEndpoint } from '@smartthings/core-sdk'
 
-import { outputItemOrList, TableCommonListOutputProducer } from '@smartthings/cli-lib'
+import { APICommand, outputItemOrList, TableCommonListOutputProducer } from '@smartthings/cli-lib'
 
 import SchemaCommand from '../../commands/schema'
+import { getSchemaAppEnsuringOrganization } from '../../lib/commands/schema-util'
 
+
+jest.mock('../../lib/commands/schema-util')
 
 describe('SchemaCommand', () => {
-	const getSpy = jest.spyOn(SchemaEndpoint.prototype, 'get').mockImplementation()
 	const listSpy = jest.spyOn(SchemaEndpoint.prototype, 'list').mockImplementation()
 
 	const outputItemOrListMock = jest.mocked(outputItemOrList<SchemaApp>)
@@ -19,8 +21,8 @@ describe('SchemaCommand', () => {
 			expect.any(SchemaCommand),
 			expect.objectContaining({
 				tableFieldDefinitions: [
-					'appName', 'partnerName', 'endpointAppId', 'schemaType', 'hostingType',
-					'stClientId', 'oAuthAuthorizationUrl', 'oAuthTokenUrl', 'oAuthClientId',
+					'appName', 'partnerName', 'endpointAppId', 'organizationId', 'schemaType', 'hostingType',
+					('stClientId' as keyof SchemaApp), 'oAuthAuthorizationUrl', 'oAuthTokenUrl', 'oAuthClientId',
 					'oAuthClientSecret', 'icon', 'icon2x', 'icon3x',
 					{ prop: 'lambdaArn', skipEmpty: true },
 					{ prop: 'lambdaArnAP', skipEmpty: true },
@@ -31,7 +33,7 @@ describe('SchemaCommand', () => {
 				],
 				primaryKeyName: 'endpointAppId',
 				sortKeyName: 'appName',
-				listTableFieldDefinitions: ['appName', 'endpointAppId', 'hostingType'],
+				listTableFieldDefinitions: ['appName', 'endpointAppId', 'organizationId', 'hostingType'],
 			}),
 			'schemaAppId',
 			expect.any(Function),
@@ -58,7 +60,7 @@ describe('SchemaCommand', () => {
 		await expect(SchemaCommand.run(['--verbose'])).resolves.not.toThrow()
 
 		const config = (outputItemOrListMock.mock.calls[0][1] as TableCommonListOutputProducer<SchemaApp>)
-		const tableFieldDefinition = config.listTableFieldDefinitions[3] as { value: (input: SchemaApp) => string | undefined }
+		const tableFieldDefinition = config.listTableFieldDefinitions[4] as { value: (input: SchemaApp) => string | undefined }
 
 		expect(tableFieldDefinition).toBeObject()
 		const valueFunction = tableFieldDefinition.value
@@ -71,16 +73,22 @@ describe('SchemaCommand', () => {
 	})
 
 	it('calls correct get endpoint', async () => {
+		const getSchemaAppMock = jest.mocked(getSchemaAppEnsuringOrganization)
+
 		await expect(SchemaCommand.run([])).resolves.not.toThrow()
 
 		const getFunction = outputItemOrListMock.mock.calls[0][4]
 
 		const schemaApp = { endpointAppId: 'schemaAppId' } as SchemaApp
-		getSpy.mockResolvedValueOnce(schemaApp)
+		getSchemaAppMock.mockResolvedValueOnce({ schemaApp, organizationWasUpdated: false })
 
 		await expect(getFunction('schemaAppId')).resolves.toStrictEqual(schemaApp)
-		expect(getSpy).toHaveBeenCalledTimes(1)
-		expect(getSpy).toHaveBeenCalledWith('schemaAppId')
+		expect(getSchemaAppMock).toHaveBeenCalledTimes(1)
+		expect(getSchemaAppMock).toHaveBeenCalledWith(
+			expect.any(APICommand),
+			'schemaAppId',
+			{ profile: 'default' },
+		)
 	})
 
 	it('calls correct list endpoint', async () => {
@@ -93,6 +101,7 @@ describe('SchemaCommand', () => {
 
 		await expect(listFunction()).resolves.toStrictEqual([schemaApp])
 		expect(listSpy).toHaveBeenCalledTimes(1)
-		expect(listSpy).toHaveBeenCalledWith()
+		// TODO: when converting to yargs add case for testing with this flag set to true
+		expect(listSpy).toHaveBeenCalledWith({ includeAllOrganizations: undefined })
 	})
 })

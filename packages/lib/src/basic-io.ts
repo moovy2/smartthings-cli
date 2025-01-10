@@ -26,7 +26,7 @@ export type IdRetrievalFunction<ID, L extends object> = (fieldInfo: Sorting<L>, 
  * results in a consistent order. If the user specifies an index into that list when querying
  * a single location, the sort key specified here is used again to ensure the same ordering.
  */
-export interface Sorting<L extends object> {
+export type Sorting<L extends object> = {
 	/**
 	 * The primary key used to uniquely identify this object.
 	 */
@@ -44,7 +44,7 @@ export interface Sorting<L extends object> {
  * If you're writing code that uses this interface, use `itemName` or `pluralItemName` from
  * command-util to translate a `Naming` instance to a name.
  */
-export interface Naming {
+export type Naming = {
 	/**
 	 * The singular name of your item, using lowercase letters and spaces to separate words.
 	 */
@@ -96,13 +96,13 @@ export type InputAndOutputItemConfig<O extends object> = FormatAndWriteItemConfi
  * on to the executeAction function parameter.
  *
  * By default input is only accepted from stdin or a file specified by the --input command line
- * flag as JSON or YAML but alternate input processors can be specified as arguments. They simply
- * need to implement the InputProcessor<I> interface. The most common use-case for this is to use a
- * Q&A session with the user to build up the input. Another possible use-case would be building
- * input from command line flags or arguments. Input processors are called in the order they are
- * specified and the first one to return data is used.
+ * flag as JSON or YAML but alternate input processors can be specified as arguments. They need to
+ * implement the InputProcessor<I> interface. The most common use-case for this is to use a Q&A
+ * session with the user to build up the input. Another possible use-case would be building input
+ * from command line flags or arguments. Input processors are called in the order they are specified
+ * and the first one to return data is used.
  */
-export async function inputAndOutputItem<I extends object, O extends object>(command: SmartThingsCommandInterface, config: InputAndOutputItemConfig<O>,
+export async function inputAndOutputItem<I extends object, O extends object = I>(command: SmartThingsCommandInterface, config: InputAndOutputItemConfig<O>,
 		executeAction: ActionFunction<void, I, O>, ...alternateInputProcessors: InputProcessor<I>[]): Promise<void> {
 	const [itemIn, defaultIOFormat] = await inputItem<I>(command, ...alternateInputProcessors)
 	if (command.flags['dry-run']) {

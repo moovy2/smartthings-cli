@@ -20,7 +20,8 @@ function buildTableOutput(tableGenerator: TableGenerator, capability: Capability
 }
 
 export default class DeviceCapabilityStatusCommand extends APICommand<typeof DeviceCapabilityStatusCommand.flags> {
-	static description = "get the current status of all of a device capability's attributes"
+	static description = "get the current status of all of a device capability's attributes" +
+		this.apiDocsURL('getDeviceStatusByCapability')
 
 	static flags = {
 		...APICommand.flags,
@@ -56,6 +57,7 @@ export default class DeviceCapabilityStatusCommand extends APICommand<typeof Dev
 
 		const config: SelectFromListConfig<CapabilityReference> = {
 			itemName: 'capability',
+			pluralItemName: 'capabilities',
 			primaryKeyName: 'id',
 			sortKeyName: 'id',
 			listTableFieldDefinitions: ['id'],

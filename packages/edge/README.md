@@ -20,7 +20,6 @@ for information on running the CLI.
 # Commands
 
 <!-- commands -->
-* [`smartthings edge`](#smartthings-edge)
 * [`smartthings edge:channels [IDORINDEX]`](#smartthings-edgechannels-idorindex)
 * [`smartthings edge:channels:assign [DRIVERID] [VERSION]`](#smartthings-edgechannelsassign-driverid-version)
 * [`smartthings edge:channels:create`](#smartthings-edgechannelscreate)
@@ -37,31 +36,16 @@ for information on running the CLI.
 * [`smartthings edge:channels:unenroll [HUBID]`](#smartthings-edgechannelsunenroll-hubid)
 * [`smartthings edge:channels:update [ID]`](#smartthings-edgechannelsupdate-id)
 * [`smartthings edge:drivers [IDORINDEX]`](#smartthings-edgedrivers-idorindex)
-* [`smartthings edge:drivers:default`](#smartthings-edgedriversdefault)
+* [`smartthings edge:drivers:default [IDORINDEX]`](#smartthings-edgedriversdefault-idorindex)
 * [`smartthings edge:drivers:delete [ID]`](#smartthings-edgedriversdelete-id)
+* [`smartthings edge:drivers:devices [IDORINDEX]`](#smartthings-edgedriversdevices-idorindex)
 * [`smartthings edge:drivers:install [DRIVERID]`](#smartthings-edgedriversinstall-driverid)
 * [`smartthings edge:drivers:installed [IDORINDEX]`](#smartthings-edgedriversinstalled-idorindex)
 * [`smartthings edge:drivers:logcat [DRIVERID]`](#smartthings-edgedriverslogcat-driverid)
 * [`smartthings edge:drivers:package [PROJECTDIRECTORY]`](#smartthings-edgedriverspackage-projectdirectory)
+* [`smartthings edge:drivers:prune [DRIVERID]`](#smartthings-edgedriversprune-driverid)
 * [`smartthings edge:drivers:switch [DEVICEID]`](#smartthings-edgedriversswitch-deviceid)
 * [`smartthings edge:drivers:uninstall [DRIVERID]`](#smartthings-edgedriversuninstall-driverid)
-
-## `smartthings edge`
-
-edge topic
-
-```
-USAGE
-  $ smartthings edge [-h]
-
-COMMON FLAGS
-  -h, --help  Show CLI help.
-
-DESCRIPTION
-  edge topic
-```
-
-_See code: [src/commands/edge.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge.ts)_
 
 ## `smartthings edge:channels [IDORINDEX]`
 
@@ -95,6 +79,11 @@ COMMON FLAGS
 DESCRIPTION
   list all channels owned by you or retrieve a single channel
 
+  For API information, see:
+
+  https://developer.smartthings.com/docs/api/public/#operation/listChannels,
+  https://developer.smartthings.com/docs/api/public/#operation/channelById
+
 EXAMPLES
   # list all user-owned channels
   $ smartthings edge:channels
@@ -107,7 +96,7 @@ EXAMPLES
   $ smartthings edge:channels --subscriber-type HUB --subscriber-id <hub-id>
 ```
 
-_See code: [src/commands/edge/channels.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/channels.ts)_
+_See code: [src/commands/edge/channels.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/channels.ts)_
 
 ## `smartthings edge:channels:assign [DRIVERID] [VERSION]`
 
@@ -134,9 +123,13 @@ COMMON FLAGS
 
 DESCRIPTION
   assign a driver to a channel
+
+  For API information, see:
+
+  https://developer.smartthings.com/docs/api/public/#operation/createDriverChannel
 ```
 
-_See code: [src/commands/edge/channels/assign.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/channels/assign.ts)_
+_See code: [src/commands/edge/channels/assign.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/channels/assign.ts)_
 
 ## `smartthings edge:channels:create`
 
@@ -163,9 +156,13 @@ COMMON FLAGS
 
 DESCRIPTION
   create a channel
+
+  For API information, see:
+
+  https://developer.smartthings.com/docs/api/public/#operation/createChannel
 ```
 
-_See code: [src/commands/edge/channels/create.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/channels/create.ts)_
+_See code: [src/commands/edge/channels/create.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/channels/create.ts)_
 
 ## `smartthings edge:channels:delete [ID]`
 
@@ -189,13 +186,17 @@ COMMON FLAGS
 
 DESCRIPTION
   delete a channel
+
+  For API information, see:
+
+  https://developer.smartthings.com/docs/api/public/#operation/deleteChannel
 ```
 
-_See code: [src/commands/edge/channels/delete.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/channels/delete.ts)_
+_See code: [src/commands/edge/channels/delete.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/channels/delete.ts)_
 
 ## `smartthings edge:channels:drivers [IDORINDEX]`
 
-list all drivers assigned to a given channel
+list drivers assigned to a given channel
 
 ```
 USAGE
@@ -218,10 +219,15 @@ COMMON FLAGS
   --language=<value>     ISO language code or "NONE" to not specify a language. Defaults to the OS locale
 
 DESCRIPTION
-  list all drivers assigned to a given channel
+  list drivers assigned to a given channel
+
+  For API information, see:
+
+  https://developer.smartthings.com/docs/api/public/#operation/getChannelDrivers,
+  https://developer.smartthings.com/docs/api/public/#operation/getDriverChannel
 ```
 
-_See code: [src/commands/edge/channels/drivers.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/channels/drivers.ts)_
+_See code: [src/commands/edge/channels/drivers.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/channels/drivers.ts)_
 
 ## `smartthings edge:channels:enroll [HUBID]`
 
@@ -249,7 +255,7 @@ DESCRIPTION
   enroll a hub in a channel
 ```
 
-_See code: [src/commands/edge/channels/enroll.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/channels/enroll.ts)_
+_See code: [src/commands/edge/channels/enroll.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/channels/enroll.ts)_
 
 ## `smartthings edge:channels:enrollments [IDORINDEX]`
 
@@ -277,9 +283,13 @@ COMMON FLAGS
 
 DESCRIPTION
   list all channels a given hub is enrolled in
+
+  For API information, see:
+
+  https://developer.smartthings.com/docs/api/public/#operation/listDriverChannels
 ```
 
-_See code: [src/commands/edge/channels/enrollments.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/channels/enrollments.ts)_
+_See code: [src/commands/edge/channels/enrollments.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/channels/enrollments.ts)_
 
 ## `smartthings edge:channels:invites [IDORINDEX]`
 
@@ -319,7 +329,7 @@ EXAMPLES
   $ smartthings edge:channels:invites <invite id>      # list details about the invite with id <invite id>
 ```
 
-_See code: [src/commands/edge/channels/invites.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/channels/invites.ts)_
+_See code: [src/commands/edge/channels/invites.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/channels/invites.ts)_
 
 ## `smartthings edge:channels:invites:accept ID`
 
@@ -345,7 +355,7 @@ DESCRIPTION
   accept a channel invitation
 ```
 
-_See code: [src/commands/edge/channels/invites/accept.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/channels/invites/accept.ts)_
+_See code: [src/commands/edge/channels/invites/accept.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/channels/invites/accept.ts)_
 
 ## `smartthings edge:channels:invites:create`
 
@@ -375,7 +385,7 @@ DESCRIPTION
   create an invitation
 ```
 
-_See code: [src/commands/edge/channels/invites/create.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/channels/invites/create.ts)_
+_See code: [src/commands/edge/channels/invites/create.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/channels/invites/create.ts)_
 
 ## `smartthings edge:channels:invites:delete [ID]`
 
@@ -403,7 +413,7 @@ DESCRIPTION
   delete a channel invitation
 ```
 
-_See code: [src/commands/edge/channels/invites/delete.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/channels/invites/delete.ts)_
+_See code: [src/commands/edge/channels/invites/delete.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/channels/invites/delete.ts)_
 
 ## `smartthings edge:channels:metainfo [IDORINDEX]`
 
@@ -447,7 +457,7 @@ EXAMPLES
       699c7308-8c72-4363-9571-880d0f5cc725
 ```
 
-_See code: [src/commands/edge/channels/metainfo.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/channels/metainfo.ts)_
+_See code: [src/commands/edge/channels/metainfo.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/channels/metainfo.ts)_
 
 ## `smartthings edge:channels:unassign [DRIVERID]`
 
@@ -473,9 +483,13 @@ COMMON FLAGS
 
 DESCRIPTION
   remove a driver from a channel
+
+  For API information, see:
+
+  https://developer.smartthings.com/docs/api/public/#operation/deleteDriverChannel
 ```
 
-_See code: [src/commands/edge/channels/unassign.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/channels/unassign.ts)_
+_See code: [src/commands/edge/channels/unassign.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/channels/unassign.ts)_
 
 ## `smartthings edge:channels:unenroll [HUBID]`
 
@@ -501,9 +515,23 @@ COMMON FLAGS
 
 DESCRIPTION
   unenroll a hub from a channel
+
+EXAMPLES
+  prompt user for hub and channel and then unenroll hub from channel
+
+    $ smartthings edge:channels:unenroll
+
+  prompt user for a channel the given hub is enrolled in and then unenroll it
+
+    $ smartthings edge:channels:unenroll 2fa0912f-cb73-424e-97f9-ffff76ea4f2a
+
+  unenroll the specified hub from the specified channel
+
+    $ smartthings edge:channels:unenroll 2fa0912f-cb73-424e-97f9-ffff76ea4f2a --channel \
+      fcd6ca9c-2764-4dbb-9bbe-d40c900c960f
 ```
 
-_See code: [src/commands/edge/channels/unenroll.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/channels/unenroll.ts)_
+_See code: [src/commands/edge/channels/unenroll.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/channels/unenroll.ts)_
 
 ## `smartthings edge:channels:update [ID]`
 
@@ -533,9 +561,13 @@ COMMON FLAGS
 
 DESCRIPTION
   update a channel
+
+  For API information, see:
+
+  https://developer.smartthings.com/docs/api/public/#operation/updateChannel
 ```
 
-_See code: [src/commands/edge/channels/update.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/channels/update.ts)_
+_See code: [src/commands/edge/channels/update.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/channels/update.ts)_
 
 ## `smartthings edge:drivers [IDORINDEX]`
 
@@ -568,11 +600,14 @@ DESCRIPTION
 
   Use this command to list all drivers you own, even if they are not yet assigned to a channel.
 
-  See also:
+  See also edge:drivers:installed to list installed drivers and edge:channels:drivers to list drivers that are part of a
+  channel you own or have subscribed to
 
-  edge:drivers:installed to list installed drivers
+  For API information, see:
 
-  edge:channels:drivers to list drivers that are part of a channel you own or have subscribed to
+  https://developer.smartthings.com/docs/api/public/#operation/listDrivers,
+  https://developer.smartthings.com/docs/api/public/#operation/getDriver,
+  https://developer.smartthings.com/docs/api/public/#operation/getDriverRevision
 
 EXAMPLES
   # list all user-owned drivers
@@ -586,16 +621,19 @@ EXAMPLES
   $ smartthings edge:drivers 699c7308-8c72-4363-9571-880d0f5cc725 --version 2021-10-25T00:48:23.295969
 ```
 
-_See code: [src/commands/edge/drivers.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/drivers.ts)_
+_See code: [src/commands/edge/drivers.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/drivers.ts)_
 
-## `smartthings edge:drivers:default`
+## `smartthings edge:drivers:default [IDORINDEX]`
 
 list default drivers available to all users
 
 ```
 USAGE
-  $ smartthings edge:drivers:default [-h] [-p <value>] [-t <value>] [--language <value>] [-O <value>] [-j] [-y] [-o
-    <value>]
+  $ smartthings edge:drivers:default [IDORINDEX] [-h] [-p <value>] [-t <value>] [--language <value>] [-O <value>] [-j]
+    [-y] [-o <value>]
+
+ARGUMENTS
+  IDORINDEX  the driver id or number in list
 
 FLAGS
   -O, --organization=<value>  the organization ID to use for this command
@@ -612,13 +650,21 @@ COMMON FLAGS
 DESCRIPTION
   list default drivers available to all users
 
+  For API information, see:
+
+  https://developer.smartthings.com/docs/api/public/#operation/getDefaultDrivers
+
 EXAMPLES
   # list default drivers
 
     $ smartthings edge:drivers:default
+
+  # show details about a specific default driver
+
+    $ smartthings edge:drivers:default 12
 ```
 
-_See code: [src/commands/edge/drivers/default.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/drivers/default.ts)_
+_See code: [src/commands/edge/drivers/default.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/drivers/default.ts)_
 
 ## `smartthings edge:drivers:delete [ID]`
 
@@ -642,9 +688,65 @@ COMMON FLAGS
 
 DESCRIPTION
   delete an edge driver
+
+  For API information, see:
+
+  https://developer.smartthings.com/docs/api/public/#operation/deleteDriver
 ```
 
-_See code: [src/commands/edge/drivers/delete.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/drivers/delete.ts)_
+_See code: [src/commands/edge/drivers/delete.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/drivers/delete.ts)_
+
+## `smartthings edge:drivers:devices [IDORINDEX]`
+
+list devices using edge drivers
+
+```
+USAGE
+  $ smartthings edge:drivers:devices [IDORINDEX] [-h] [-p <value>] [-t <value>] [--language <value>] [-O <value>] [-j]
+    [-y] [-o <value>] [-H <value>] [-D <value>]
+
+ARGUMENTS
+  IDORINDEX  the device id or number in list
+
+FLAGS
+  -D, --driver=<UUID>         driver id
+  -H, --hub=<UUID>            hub id
+  -O, --organization=<value>  the organization ID to use for this command
+
+COMMON FLAGS
+  -h, --help             Show CLI help.
+  -j, --json             use JSON format of input and/or output
+  -o, --output=<value>   specify output file
+  -p, --profile=<value>  [default: default] configuration profile
+  -t, --token=<value>    the auth token to use
+  -y, --yaml             use YAML format of input and/or output
+  --language=<value>     ISO language code or "NONE" to not specify a language. Defaults to the OS locale
+
+DESCRIPTION
+  list devices using edge drivers
+
+  For API information, see:
+
+  https://developer.smartthings.com/docs/api/public/#operation/getDevices,
+  https://developer.smartthings.com/docs/api/public/#operation/listDrivers,
+  https://developer.smartthings.com/docs/api/public/#operation/getDriver,
+  https://developer.smartthings.com/docs/api/public/#operation/getDriverRevision
+
+EXAMPLES
+  # list all devices using edge drivers
+  $ smartthings edge:drivers:devices
+  # display details about the third device listed in the above command
+  $ smartthings edge:drivers:devices 3
+
+  # display details about a device by using its id
+  $ smartthings edge:drivers:devices dfda0a8e-55d6-445b-ace5-db828679bcb3
+  # list all devices using edge drivers on the specified hub
+  $ smartthings edge:drivers:devices --hub a9108ab1-7087-4c10-9781-a0627b084fce
+  # list devices that use a specific driver
+  $ smartthings edge:drivers:devices --driver b67a134c-ace8-4b8d-9a0e-444ad78b4455
+```
+
+_See code: [src/commands/edge/drivers/devices.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/drivers/devices.ts)_
 
 ## `smartthings edge:drivers:install [DRIVERID]`
 
@@ -672,6 +774,10 @@ COMMON FLAGS
 DESCRIPTION
   install an edge driver onto a hub
 
+  For API information, see:
+
+  https://developer.smartthings.com/docs/api/public/#operation/installDrivers
+
 EXAMPLES
   $ smartthings edge:drivers:install                                         # use Q&A format to enter required values
 
@@ -680,7 +786,7 @@ EXAMPLES
   $ smartthings edge:drivers:install -H <hub-id> -C <channel-id> <driver-id> # install a driver from a channel on an enrolled hub
 ```
 
-_See code: [src/commands/edge/drivers/install.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/drivers/install.ts)_
+_See code: [src/commands/edge/drivers/install.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/drivers/install.ts)_
 
 ## `smartthings edge:drivers:installed [IDORINDEX]`
 
@@ -712,6 +818,11 @@ COMMON FLAGS
 DESCRIPTION
   list all drivers installed on a given hub
 
+  For API information, see:
+
+  https://developer.smartthings.com/docs/api/public/#operation/listHubInstalledDrivers,
+  https://developer.smartthings.com/docs/api/public/#operation/getHubDeviceDriver
+
 EXAMPLES
   list all installed drivers
 
@@ -730,7 +841,7 @@ EXAMPLES
     $ smartthings edge:drivers:installed <driver-id>
 ```
 
-_See code: [src/commands/edge/drivers/installed.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/drivers/installed.ts)_
+_See code: [src/commands/edge/drivers/installed.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/drivers/installed.ts)_
 
 ## `smartthings edge:drivers:logcat [DRIVERID]`
 
@@ -760,7 +871,7 @@ DESCRIPTION
   stream logs from installed drivers
 ```
 
-_See code: [src/commands/edge/drivers/logcat.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/drivers/logcat.ts)_
+_See code: [src/commands/edge/drivers/logcat.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/drivers/logcat.ts)_
 
 ## `smartthings edge:drivers:package [PROJECTDIRECTORY]`
 
@@ -775,10 +886,11 @@ ARGUMENTS
   PROJECTDIRECTORY  [default: .] directory containing project to upload
 
 FLAGS
-  -I, --install               prompt for hub to install to after assigning it to the channel, implies --assign if
-                              --assign or --channel not included
+  -I, --install               prompt for hub (or use default if previously specified) to install to after assigning it
+                              to the channel, implies --assign if --assign or --channel not included
   -O, --organization=<value>  the organization ID to use for this command
-  -a, --assign                prompt for a channel to assign the driver to after upload
+  -a, --assign                prompt for a channel (or use default if previously specified) to assign the driver to
+                              after upload
   -b, --build-only=<value>    save package to specified zip file but skip upload
   -u, --upload=<value>        upload zip file previously built with --build flag
   --channel=<UUID>            automatically assign driver to specified channel after upload
@@ -796,6 +908,10 @@ COMMON FLAGS
 
 DESCRIPTION
   build and upload an edge package
+
+  For API information, see:
+
+  https://developer.smartthings.com/docs/api/public/#operation/uploadDriverPackage
 
 EXAMPLES
   # build and upload driver found in current directory:
@@ -816,7 +932,39 @@ EXAMPLES
     $ smartthings edge:drivers:package -u driver.zip
 ```
 
-_See code: [src/commands/edge/drivers/package.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/drivers/package.ts)_
+_See code: [src/commands/edge/drivers/package.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/drivers/package.ts)_
+
+## `smartthings edge:drivers:prune [DRIVERID]`
+
+uninstall unused edge drivers from a hub
+
+```
+USAGE
+  $ smartthings edge:drivers:prune [DRIVERID] [-h] [-p <value>] [-t <value>] [--language <value>] [-O <value>] [-H
+    <value>]
+
+ARGUMENTS
+  DRIVERID  id of driver to uninstall
+
+FLAGS
+  -H, --hub=<UUID>            hub id
+  -O, --organization=<value>  the organization ID to use for this command
+
+COMMON FLAGS
+  -h, --help             Show CLI help.
+  -p, --profile=<value>  [default: default] configuration profile
+  -t, --token=<value>    the auth token to use
+  --language=<value>     ISO language code or "NONE" to not specify a language. Defaults to the OS locale
+
+DESCRIPTION
+  uninstall unused edge drivers from a hub
+
+  For API information, see:
+
+  https://developer.smartthings.com/docs/api/public/#operation/uninstallDriver
+```
+
+_See code: [src/commands/edge/drivers/prune.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/drivers/prune.ts)_
 
 ## `smartthings edge:drivers:switch [DEVICEID]`
 
@@ -846,6 +994,10 @@ COMMON FLAGS
 DESCRIPTION
   change the driver used by an installed device
 
+  For API information, see:
+
+  https://developer.smartthings.com/docs/api/public/#operation/updateHubDevice
+
 EXAMPLES
   # switch driver, prompting user for all necessary input
   $ smartthings edge:drivers:switch
@@ -857,7 +1009,7 @@ EXAMPLES
     $ smartthings edge:drivers:switch --include-non-matching
 ```
 
-_See code: [src/commands/edge/drivers/switch.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/drivers/switch.ts)_
+_See code: [src/commands/edge/drivers/switch.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/drivers/switch.ts)_
 
 ## `smartthings edge:drivers:uninstall [DRIVERID]`
 
@@ -883,9 +1035,13 @@ COMMON FLAGS
 
 DESCRIPTION
   uninstall an edge driver from a hub
+
+  For API information, see:
+
+  https://developer.smartthings.com/docs/api/public/#operation/uninstallDriver
 ```
 
-_See code: [src/commands/edge/drivers/uninstall.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@2.0.0/packages/edge/src/commands/edge/drivers/uninstall.ts)_
+_See code: [src/commands/edge/drivers/uninstall.ts](https://github.com/SmartThingsCommunity/smartthings-cli/blob/@smartthings/plugin-cli-edge@3.3.4/packages/edge/src/commands/edge/drivers/uninstall.ts)_
 <!-- commandsstop -->
 
 # Building

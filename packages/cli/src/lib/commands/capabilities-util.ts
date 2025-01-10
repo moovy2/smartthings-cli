@@ -110,7 +110,7 @@ export const buildTableOutput = (tableGenerator: TableGenerator, capability: Cap
 	return output
 }
 
-export interface CapabilityId {
+export type CapabilityId = {
 	id: string
 	version: number
 }
@@ -224,19 +224,20 @@ export const translateToId = async (sortKeyName: Extract<keyof CapabilitySummary
 }
 
 export const chooseCapability = async (command: APICommand<typeof APICommand.flags>, idFromArgs?: string,
-		versionFromArgs?: number, promptMessage?: string): Promise<CapabilityId> => {
+		versionFromArgs?: number, promptMessage?: string, namespace?: string): Promise<CapabilityId> => {
 	const preselectedId: CapabilityId | undefined = idFromArgs
 		? { id: idFromArgs, version: versionFromArgs ?? 1 }
 		: undefined
 	const config: SelectFromListConfig<CapabilitySummaryWithNamespace> = {
 		itemName: 'capability',
+		pluralItemName: 'capabilities',
 		primaryKeyName: 'id',
 		sortKeyName: 'id',
 		listTableFieldDefinitions: ['id', 'version', 'status'],
 	}
 	return selectFromList(command, config, {
 		preselectedId,
-		listItems: () => getCustomByNamespace(command.client),
+		listItems: () => getCustomByNamespace(command.client, namespace),
 		getIdFromUser,
 		promptMessage,
 	})
@@ -246,6 +247,7 @@ export const chooseCapabilityFiltered = async (command: APICommand<typeof APICom
 		promptMessage: string, filter: string): Promise<CapabilityId> => {
 	const config: SelectFromListConfig<CapabilitySummaryWithNamespace> = {
 		itemName: 'capability',
+		pluralItemName: 'capabilities',
 		primaryKeyName: 'id',
 		sortKeyName: 'id',
 		listTableFieldDefinitions: ['id', 'version', 'status'],

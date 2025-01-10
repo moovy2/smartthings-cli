@@ -4,7 +4,8 @@ import { inspect } from 'util'
 
 
 export default class AppRegisterCommand extends APICommand<typeof AppRegisterCommand.flags> {
-	static description = 'send request to app target URL to confirm existence and authorize lifecycle events'
+	static description = 'send request to app target URL to confirm existence and authorize lifecycle events' +
+		this.apiDocsURL('register')
 
 	static flags = APICommand.flags
 
@@ -12,6 +13,13 @@ export default class AppRegisterCommand extends APICommand<typeof AppRegisterCom
 		name: 'id',
 		description: 'the app id',
 	}]
+
+	static examples = [
+		{
+			description: 'send registration request to the app with the given id',
+			command: 'smartthings apps:register 392bcb11-e251-44f3-b58b-17f93015f3aa',
+		},
+	]
 
 	async run(): Promise<void> {
 		const config: SelectFromListConfig<PagedApp> = {

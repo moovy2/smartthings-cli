@@ -1,6 +1,6 @@
 import { Channel, OrganizationResponse, SmartThingsClient } from '@smartthings/core-sdk'
 
-import { APICommand, ChooseOptions, chooseOptionsWithDefaults, forAllOrganizations, selectFromList,
+import { APICommand, chooseOptionsWithDefaults, forAllOrganizations, selectFromList,
 	stringTranslateToId } from '@smartthings/cli-lib'
 
 import { chooseChannel, listChannels, ChooseChannelOptions, chooseChannelOptionsWithDefaults, withChannelNames }
@@ -22,7 +22,7 @@ describe('channels-util', () => {
 		const chooseOptionsWithDefaultsMock = jest.mocked(chooseOptionsWithDefaults)
 
 		it('has a reasonable default', () => {
-			chooseOptionsWithDefaultsMock.mockReturnValue({} as unknown as ChooseOptions)
+			chooseOptionsWithDefaultsMock.mockReturnValue({} as ChooseChannelOptions)
 
 			expect(chooseChannelOptionsWithDefaults())
 				.toEqual(expect.objectContaining({ includeReadOnly: false }))
@@ -32,7 +32,7 @@ describe('channels-util', () => {
 		})
 
 		it('accepts true value', () => {
-			chooseOptionsWithDefaultsMock.mockReturnValue({ includeReadOnly: true } as unknown as ChooseOptions)
+			chooseOptionsWithDefaultsMock.mockReturnValue({ includeReadOnly: true } as ChooseChannelOptions)
 
 			expect(chooseChannelOptionsWithDefaults({ includeReadOnly: true }))
 				.toEqual(expect.objectContaining({ includeReadOnly: true }))
@@ -43,10 +43,13 @@ describe('channels-util', () => {
 	})
 
 	describe('chooseChannel', () => {
+		const channel = { channelId: 'channel-id', name: 'channel name' } as Channel
+
 		const selectFromListMock = jest.mocked(selectFromList)
 
 		const listChannelsMock = jest.fn()
-		const client = { channels: { list: listChannelsMock } }
+		const getChannelsMock = jest.fn()
+		const client = { channels: { list: listChannelsMock, get: getChannelsMock } }
 		// eslint-disable-next-line @typescript-eslint/naming-convention
 		const flags = { 'all-organizations': false, 'include-read-only': false }
 		const command = { client, flags } as unknown as APICommand<typeof APICommand.flags>
@@ -68,8 +71,10 @@ describe('channels-util', () => {
 			expect(selectFromListMock).toHaveBeenCalledTimes(1)
 			expect(selectFromListMock).toHaveBeenCalledWith(command,
 				expect.objectContaining({ primaryKeyName: 'channelId', sortKeyName: 'name' }),
-				expect.objectContaining({ configKeyForDefaultValue: 'defaultChannel',
-					promptMessage: 'prompt message' }))
+				expect.objectContaining({
+					defaultValue: { configKey: 'defaultChannel', getItem: expect.any(Function), userMessage: expect.any(Function) },
+					promptMessage: 'prompt message',
+				}))
 		})
 
 		it('translates id from index if allowed', async () => {
@@ -91,6 +96,23 @@ describe('channels-util', () => {
 			expect(selectFromListMock).toHaveBeenCalledWith(command,
 				expect.objectContaining({ primaryKeyName: 'channelId', sortKeyName: 'name' }),
 				expect.objectContaining({ preselectedId: 'translated-id' }))
+		})
+
+		it('uses listItems from options', async () => {
+			const listItemsMock = jest.fn()
+
+			chooseChannelOptionsWithDefaultsSpy.mockReturnValueOnce({} as ChooseChannelOptions)
+			selectFromListMock.mockImplementation(async () => 'chosen-channel-id')
+
+			expect(await chooseChannel(command, 'prompt message', 'command-line-channel-id',
+				{ listItems: listItemsMock })).toBe('chosen-channel-id')
+
+			expect(chooseChannelOptionsWithDefaultsSpy).toHaveBeenCalledTimes(1)
+			expect(chooseChannelOptionsWithDefaultsSpy).toHaveBeenCalledWith({ listItems: listItemsMock })
+			expect(selectFromListMock).toHaveBeenCalledTimes(1)
+			expect(selectFromListMock).toHaveBeenCalledWith(command,
+				expect.objectContaining({ primaryKeyName: 'channelId', sortKeyName: 'name' }),
+				expect.objectContaining({ listItems: listItemsMock }))
 		})
 
 		it('uses list function that lists channels', async () => {
@@ -145,6 +167,46 @@ describe('channels-util', () => {
 
 			expect(listChannelsMock).toHaveBeenCalledTimes(1)
 			expect(listChannelsMock).toHaveBeenCalledWith({ includeReadOnly: true })
+		})
+
+		describe('defaultConfig', () => {
+			test('getItem uses channels.get', async () => {
+				chooseChannelOptionsWithDefaultsSpy.mockReturnValueOnce(
+					{ allowIndex: false, useConfigDefault: true } as ChooseChannelOptions)
+				selectFromListMock.mockImplementation(async () => 'chosen-channel-id')
+
+				expect(await chooseChannel(command, 'prompt message', undefined,
+					{ useConfigDefault: true })).toBe('chosen-channel-id')
+
+				const defaultValue = selectFromListMock.mock.calls[0][2].defaultValue
+
+				expect(defaultValue).toBeDefined()
+				const getItem = defaultValue?.getItem as (id: string) => Promise<Channel>
+				expect(getItem).toBeDefined()
+				getChannelsMock.mockResolvedValueOnce(channel)
+
+				expect(await getItem('id-to-check')).toBe(channel)
+
+				expect(getChannelsMock).toHaveBeenCalledTimes(1)
+				expect(getChannelsMock).toHaveBeenCalledWith('id-to-check')
+			})
+
+			test('userMessage returns expected message', async () => {
+				chooseChannelOptionsWithDefaultsSpy.mockReturnValueOnce(
+					{ allowIndex: false, useConfigDefault: true } as ChooseChannelOptions)
+				selectFromListMock.mockImplementation(async () => 'chosen-channel-id')
+
+				expect(await chooseChannel(command, 'prompt message', undefined,
+					{ useConfigDefault: true })).toBe('chosen-channel-id')
+
+				const defaultValue = selectFromListMock.mock.calls[0][2].defaultValue
+
+				expect(defaultValue).toBeDefined()
+				const userMessage = defaultValue?.userMessage as (channel: Channel) => string
+				expect(userMessage).toBeDefined()
+
+				expect(userMessage(channel)).toBe('using previously specified default channel named "channel name" (channel-id)')
+			})
 		})
 	})
 
@@ -242,6 +304,21 @@ describe('channels-util', () => {
 			expect(apiListChannelsMock).toHaveBeenCalledTimes(1)
 			expect(apiListChannelsMock).toHaveBeenCalledWith(expect.objectContaining({ includeReadOnly: true }))
 			expect(apiGetChannelsMock).toHaveBeenCalledTimes(0)
+		})
+
+		it('looks up and adds channel name when missing from list', async () => {
+			apiListChannelsMock.mockResolvedValueOnce([channel1])
+			apiGetChannelsMock.mockResolvedValueOnce(channel2)
+
+			expect(await withChannelNames(client, [thingWithChannel1, thingWithChannel2])).toStrictEqual([
+				{ channelId: 'channel-id-1', channelName: 'Channel 1' },
+				{ channelId: 'channel-id-2', channelName: 'Channel 2' },
+			])
+
+			expect(apiListChannelsMock).toHaveBeenCalledTimes(1)
+			expect(apiListChannelsMock).toHaveBeenCalledWith(expect.objectContaining({ includeReadOnly: true }))
+			expect(apiGetChannelsMock).toHaveBeenCalledTimes(1)
+			expect(apiGetChannelsMock).toHaveBeenCalledWith('channel-id-2')
 		})
 	})
 })

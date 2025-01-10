@@ -2,15 +2,23 @@ import { Flags } from '@oclif/core'
 
 import { SchemaApp } from '@smartthings/core-sdk'
 
-import { APICommand, outputItemOrList, OutputItemOrListConfig } from '@smartthings/cli-lib'
+import {
+	allOrganizationsFlags,
+	APIOrganizationCommand,
+	outputItemOrList,
+	OutputItemOrListConfig,
+} from '@smartthings/cli-lib'
+import { getSchemaAppEnsuringOrganization } from '../lib/commands/schema-util'
 
 
-export default class SchemaCommand extends APICommand<typeof SchemaCommand.flags> {
-	static description = 'list all ST Schema Apps currently available in a user account'
+export default class SchemaCommand extends APIOrganizationCommand<typeof SchemaCommand.flags> {
+	static description = 'list all ST Schema Apps currently available in a user account' +
+		this.apiDocsURL('getAppsByUserToken', 'getAppsByEndpointAppId')
 
 	static flags = {
-		...APICommand.flags,
+		...APIOrganizationCommand.flags,
 		...outputItemOrList.flags,
+		...allOrganizationsFlags,
 		verbose: Flags.boolean({
 			description: 'include ARN in output',
 			char: 'v',
@@ -25,7 +33,7 @@ export default class SchemaCommand extends APICommand<typeof SchemaCommand.flags
 	async run(): Promise<void> {
 		const config: OutputItemOrListConfig<SchemaApp> = {
 			tableFieldDefinitions: [
-				'appName', 'partnerName', 'endpointAppId', 'schemaType', 'hostingType',
+				'appName', 'partnerName', 'endpointAppId', 'organizationId', 'schemaType', 'hostingType',
 				// stClientId is missing from the docs
 				('stClientId' as keyof SchemaApp), 'oAuthAuthorizationUrl', 'oAuthTokenUrl', 'oAuthClientId',
 				'oAuthClientSecret', 'icon', 'icon2x', 'icon3x',
@@ -38,7 +46,7 @@ export default class SchemaCommand extends APICommand<typeof SchemaCommand.flags
 			],
 			primaryKeyName: 'endpointAppId',
 			sortKeyName: 'appName',
-			listTableFieldDefinitions: ['appName', 'endpointAppId', 'hostingType'],
+			listTableFieldDefinitions: ['appName', 'endpointAppId', 'organizationId', 'hostingType'],
 		}
 		if (this.flags.verbose) {
 			config.listTableFieldDefinitions.push({
@@ -48,8 +56,8 @@ export default class SchemaCommand extends APICommand<typeof SchemaCommand.flags
 		}
 
 		await outputItemOrList(this, config, this.args.id,
-			() => this.client.schema.list(),
-			id => this.client.schema.get(id),
+			() => this.client.schema.list({ includeAllOrganizations: this.flags['all-organizations'] }),
+			async id => (await getSchemaAppEnsuringOrganization(this, id, this.flags)).schemaApp,
 		)
 	}
 }

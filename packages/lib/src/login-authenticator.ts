@@ -6,12 +6,12 @@ import getPort from 'get-port'
 import open from 'open'
 import path from 'path'
 import qs from 'qs'
-import { SmartThingsURLProvider, defaultSmartThingsURLProvider, Authenticator } from '@smartthings/core-sdk'
+import { SmartThingsURLProvider, defaultSmartThingsURLProvider, Authenticator, HttpClientHeaders } from '@smartthings/core-sdk'
 import log4js from '@log4js-node/log4js-api'
 import { CliUx } from '@oclif/core'
 
 
-export interface ClientIdProvider extends SmartThingsURLProvider {
+export type ClientIdProvider = SmartThingsURLProvider & {
 	clientId: string
 	baseOAuthInURL: string
 	oauthAuthTokenRefreshURL: string
@@ -27,7 +27,7 @@ export const defaultClientIdProvider: ClientIdProvider = {
 // All the scopes the clientId we are using is configured to use.
 const scopes = ['controller:stCli']
 
-interface AuthenticationInfo {
+type AuthenticationInfo = {
 	accessToken: string
 	refreshToken: string
 	expires: Date
@@ -45,7 +45,7 @@ function credentialsFile(): string {
 	return (global as unknown as { _credentialsFile: string })._credentialsFile
 }
 
-interface CredentialsFileData {
+type CredentialsFileData = {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	[profileName: string]: any
 }
@@ -279,19 +279,7 @@ export class LoginAuthenticator implements Authenticator {
 			})
 	}
 
-	async authenticate(requestConfig: AxiosRequestConfig): Promise<AxiosRequestConfig> {
-		const token = await this.authenticateGeneric()
-
-		return {
-			...requestConfig,
-			headers: {
-				...requestConfig.headers,
-				Authorization: `Bearer ${token}`,
-			},
-		}
-	}
-
-	async authenticateGeneric(): Promise<string> {
+	async authenticate(): Promise<HttpClientHeaders> {
 		this.logger.debug('authentication - enter')
 		// refresh if we have less than an hour left on the auth token
 		if (this.authenticationInfo && this.authenticationInfo.expires.getTime() < Date.now() + 60 * 60 * 1000) {
@@ -304,7 +292,7 @@ export class LoginAuthenticator implements Authenticator {
 		}
 
 		if (this.authenticationInfo) {
-			return this.authenticationInfo.accessToken
+			return { Authorization: `Bearer ${this.authenticationInfo.accessToken}` }
 		}
 
 		throw new Error('unable to obtain user credentials')

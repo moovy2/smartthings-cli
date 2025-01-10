@@ -1,17 +1,16 @@
-import { DeviceProfile } from '@smartthings/core-sdk'
+import { APIOrganizationCommand, formatAndWriteItem } from '@smartthings/cli-lib'
 
-import { APIOrganizationCommand, OutputItemOrListConfig, outputItemOrList } from '@smartthings/cli-lib'
-
-import { buildTableOutput, DeviceDefinition } from '../../lib/commands/deviceprofiles-util'
+import { buildTableOutput, chooseDeviceProfile, DeviceDefinition } from '../../lib/commands/deviceprofiles-util'
 import { prunePresentation } from '../../lib/commands/deviceprofiles/view-util'
 
 
 export default class DeviceProfilesViewCommand extends APIOrganizationCommand<typeof DeviceProfilesViewCommand.flags> {
-	static description = 'show device profile and device configuration in a single, consolidated view'
+	static description = 'show device profile and device configuration in a single, consolidated view' +
+		this.apiDocsURL('getDeviceProfile, getDeviceConfiguration')
 
 	static flags = {
 		...APIOrganizationCommand.flags,
-		...outputItemOrList.flags,
+		...formatAndWriteItem.flags,
 	}
 
 	static args = [{
@@ -20,12 +19,6 @@ export default class DeviceProfilesViewCommand extends APIOrganizationCommand<ty
 	}]
 
 	async run(): Promise<void> {
-		const config: OutputItemOrListConfig<DeviceDefinition, DeviceProfile> = {
-			primaryKeyName: 'id',
-			sortKeyName: 'name',
-			buildTableOutput: data => buildTableOutput(this.tableGenerator, data),
-		}
-
 		const getDeviceProfileAndConfig = async (id: string): Promise<DeviceDefinition> => {
 			const profile = await this.client.deviceProfiles.get(id)
 			if (profile.metadata) {
@@ -40,8 +33,8 @@ export default class DeviceProfilesViewCommand extends APIOrganizationCommand<ty
 			return profile
 		}
 
-		await outputItemOrList(this, config, this.args.id,
-			() => this.client.deviceProfiles.list(),
-			getDeviceProfileAndConfig)
+		const profileId = await chooseDeviceProfile(this, this.args.id, { allowIndex: true })
+		const profileAndConfig = await (getDeviceProfileAndConfig(profileId))
+		await formatAndWriteItem(this, { buildTableOutput: data => buildTableOutput(this.tableGenerator, data) }, profileAndConfig)
 	}
 }

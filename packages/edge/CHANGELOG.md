@@ -1,5 +1,119 @@
 # @smartthings/plugin-cli-edge
 
+## 3.3.4
+
+### Patch Changes
+
+- [#622](https://github.com/SmartThingsCommunity/smartthings-cli/pull/622) [`b99e397`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/b99e3976ec87f241e0b2b800b36fa1b331f5a7a8) Thanks [@rossiam](https://github.com/rossiam)! - fix error when running invites:schema that could happen if user has a schema app without an organization
+
+- Updated dependencies [[`b99e397`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/b99e3976ec87f241e0b2b800b36fa1b331f5a7a8), [`032a231`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/032a2317825c55a063ec02171cbd4178314092f4)]:
+  - @smartthings/cli-lib@2.3.0
+
+## 3.3.3
+
+### Patch Changes
+
+- [#581](https://github.com/SmartThingsCommunity/smartthings-cli/pull/581) [`a9d6398`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/a9d6398634236462a232f94d2ec3f2b5ab1fe4fc) Thanks [@rossiam](https://github.com/rossiam)! - bump core SDK version
+
+- Updated dependencies [[`a9d6398`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/a9d6398634236462a232f94d2ec3f2b5ab1fe4fc)]:
+  - @smartthings/cli-lib@2.2.4
+
+## 3.3.2
+
+### Patch Changes
+
+- [#559](https://github.com/SmartThingsCommunity/smartthings-cli/pull/559) [`e75b122`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/e75b1223b108dc90fd320c8f70a77551887f8067) Thanks [@rossiam](https://github.com/rossiam)! - minor ux tweaks to new ST Schema Invites
+
+- Updated dependencies [[`e75b122`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/e75b1223b108dc90fd320c8f70a77551887f8067)]:
+  - @smartthings/cli-lib@2.2.3
+
+## 3.3.1
+
+### Patch Changes
+
+- [#547](https://github.com/SmartThingsCommunity/smartthings-cli/pull/547) [`4a5d13c`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/4a5d13c8711515f99582ec19c05356d42a051ec0) Thanks [@Sitlintac](https://github.com/Sitlintac)! - fix channel name lookup bug for edge:drivers:installed command
+
+- [#546](https://github.com/SmartThingsCommunity/smartthings-cli/pull/546) [`33f6476`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/33f6476f1cfb04d021c6fa9d4c6b7aac4818b8d9) Thanks [@rossiam](https://github.com/rossiam)! - update axios and qs dependencies
+
+- [#549](https://github.com/SmartThingsCommunity/smartthings-cli/pull/549) [`60a9126`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/60a9126c1b844ba91cc84a5353c46a578469eadc) Thanks [@bflorian](https://github.com/bflorian)! - feat: added organizations to Schema CRUD commands
+
+- [#551](https://github.com/SmartThingsCommunity/smartthings-cli/pull/551) [`8b18df3`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/8b18df3c31627d0855a76ce5ab6eea2a4dfdd44e) Thanks [@Doczillar](https://github.com/Doczillar)! - Improved channels:unassign prompt text
+
+- Updated dependencies [[`33f6476`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/33f6476f1cfb04d021c6fa9d4c6b7aac4818b8d9), [`60a9126`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/60a9126c1b844ba91cc84a5353c46a578469eadc)]:
+  - @smartthings/cli-lib@2.2.2
+
+## 3.3.0
+
+### Minor Changes
+
+- [#544](https://github.com/SmartThingsCommunity/smartthings-cli/pull/544) [`c32e1e1`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/c32e1e1a010d0458591aa20f44d067e1344076b1) Thanks [@rossiam](https://github.com/rossiam)! - added support for viewing edge driver usage and pruning unused drivers
+
+### Patch Changes
+
+- [#545](https://github.com/SmartThingsCommunity/smartthings-cli/pull/545) [`bcb0af5`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/bcb0af5b011043903d265b40ac381f1dc0ebcff6) Thanks [@rossiam](https://github.com/rossiam)! - fixed issue where ctrl-c wouldn't work while connecting
+
+- Updated dependencies [[`b865ad8`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/b865ad8c7752ed85aadcadd0c1c6da742f74f93f), [`bcb0af5`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/bcb0af5b011043903d265b40ac381f1dc0ebcff6)]:
+  - @smartthings/cli-lib@2.2.1
+
+## 3.2.1
+
+### Patch Changes
+
+- [#537](https://github.com/SmartThingsCommunity/smartthings-cli/pull/537) [`964fb60`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/964fb6099019c6d013dac12fbc09a5d5ecd04b89) Thanks [@bflorian](https://github.com/bflorian)! - chore: reverted minimum node version to 18.5.0
+
+- Updated dependencies [[`964fb60`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/964fb6099019c6d013dac12fbc09a5d5ecd04b89)]:
+  - @smartthings/cli-lib@2.1.1
+
+## 3.2.0
+
+### Minor Changes
+
+- [#521](https://github.com/SmartThingsCommunity/smartthings-cli/pull/521) [`7f331ca`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/7f331ca835beba21bb96185dbfe8e458c4258ccf) Thanks [@rossiam](https://github.com/rossiam)! - include search-parameters.yaml (or .yml) in edge driver package
+
+## 3.1.1
+
+### Patch Changes
+
+- [#513](https://github.com/SmartThingsCommunity/smartthings-cli/pull/513) [`13167bd`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/13167bd407156731bfc8baf62a6deba10e2423b0) Thanks [@rossiam](https://github.com/rossiam)! - edge:channels:unenroll
+  - don't include hubs not enrolled in any channel when asking user for a hub
+  - present only enrolled channels when asking the user to choose a channel
+- Updated dependencies [[`c391bb5`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/c391bb5387662db7b767d34434779d8e8cbaeb5e), [`13167bd`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/13167bd407156731bfc8baf62a6deba10e2423b0)]:
+  - @smartthings/cli-lib@2.1.0
+
+## 3.1.0
+
+### Minor Changes
+
+- [#509](https://github.com/SmartThingsCommunity/smartthings-cli/pull/509) [`9b9b398`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/9b9b398984fb9c51c112d3a11192f0ea5318c6d0) Thanks [@rossiam](https://github.com/rossiam)! - query user for hub in `edge:drivers:logcat` command
+
+### Patch Changes
+
+- [#509](https://github.com/SmartThingsCommunity/smartthings-cli/pull/509) [`9b9b398`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/9b9b398984fb9c51c112d3a11192f0ea5318c6d0) Thanks [@rossiam](https://github.com/rossiam)! - bump core SDK version
+
+- Updated dependencies [[`9b9b398`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/9b9b398984fb9c51c112d3a11192f0ea5318c6d0)]:
+  - @smartthings/cli-lib@2.0.1
+
+## 3.0.0
+
+### Major Changes
+
+- [#497](https://github.com/SmartThingsCommunity/smartthings-cli/pull/497) [`7c64fea`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/7c64fea72ec3af69155e594bb30de0898e716281) Thanks [@rossiam](https://github.com/rossiam)! - back off axios version to last non-ESM version so library will still work with pkg tool
+
+### Patch Changes
+
+- Updated dependencies [[`7c64fea`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/7c64fea72ec3af69155e594bb30de0898e716281), [`f7a3a23`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/f7a3a23c636de50d20f1b640e0c82496c8adcc40), [`79da49f`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/79da49feaa09d0552cc0829f5e00873842e65944)]:
+  - @smartthings/cli-lib@2.0.0
+
+## 2.0.1
+
+### Patch Changes
+
+- [#453](https://github.com/SmartThingsCommunity/smartthings-cli/pull/453) [`712476c`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/712476c0166c030ce94f04bf89a0893f00204bc1) Thanks [@rossiam](https://github.com/rossiam)! - \* Validate saved default values for hubs and channels before using them).
+  - Inform the user when a default value is used.
+  - Don't use default value for `edge:drivers:install` command.
+- Updated dependencies [[`c615772`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/c6157720531cb9383fcf74c4eea607cbf1971770), [`712476c`](https://github.com/SmartThingsCommunity/smartthings-cli/commit/712476c0166c030ce94f04bf89a0893f00204bc1)]:
+  - @smartthings/cli-lib@1.0.1
+
 ## 2.0.0
 
 ### Patch Changes

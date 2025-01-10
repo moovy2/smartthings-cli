@@ -96,7 +96,7 @@ describe('LoginAuthenticator', () => {
 		},
 	}
 	const codeVerifierRegex = /\bcode_verifier=[\w|-]+\b/
-	interface AuthTokenResponse {
+	type AuthTokenResponse = {
 		/* eslint-disable @typescript-eslint/naming-convention */
 		access_token: string
 		refresh_token: string
@@ -106,7 +106,7 @@ describe('LoginAuthenticator', () => {
 		device_id: string
 		/* eslint-enable @typescript-eslint/naming-convention */
 	}
-	const tokenResponse: AxiosResponse<AuthTokenResponse> = {
+	const tokenResponse = {
 		data: {
 			/* eslint-disable @typescript-eslint/naming-convention */
 			access_token: 'access token',
@@ -119,9 +119,7 @@ describe('LoginAuthenticator', () => {
 		},
 		status: 200,
 		statusText: 'OK',
-		headers: '',
-		config: {},
-	}
+	} as AxiosResponse<AuthTokenResponse>
 
 	const mockServer = {
 		close: jest.fn(),
@@ -271,7 +269,7 @@ describe('LoginAuthenticator', () => {
 			expect(postData).toMatch(/\bcode=auth-code\b/)
 			expect(postData).toMatch(/\bredirect_uri=http%3A%2F%2Flocalhost%3A7777%2Ffinish\b/)
 			const postConfig = postMock.mock.calls[0][2]
-			expect(postConfig?.headers['Content-Type']).toBe('application/x-www-form-urlencoded')
+			expect(postConfig?.headers?.['Content-Type']).toBe('application/x-www-form-urlencoded')
 
 			expect(mockFinishResponse.send).toHaveBeenCalledTimes(1)
 			expect(mockFinishResponse.send).toHaveBeenCalledWith(expect.stringContaining('You can close the window.'))
@@ -395,7 +393,7 @@ describe('LoginAuthenticator', () => {
 			expect(postData).toMatch(/\bcode=auth-code\b/)
 			expect(postData).toMatch(/\bredirect_uri=http%3A%2F%2Flocalhost%3A7777%2Ffinish\b/)
 			const postConfig = postMock.mock.calls[0][2]
-			expect(postConfig?.headers['Content-Type']).toBe('application/x-www-form-urlencoded')
+			expect(postConfig?.headers?.['Content-Type']).toBe('application/x-www-form-urlencoded')
 
 			expect(mockFinishResponse.send).toHaveBeenCalledTimes(1)
 			expect(mockFinishResponse.send).toHaveBeenCalledWith(expect.stringContaining('Failure obtaining access token.'))
@@ -431,31 +429,12 @@ describe('LoginAuthenticator', () => {
 	})
 
 	describe('authenticate', () => {
-		it('calls generic authenticate', async () => {
-			readFileMock.mockReturnValueOnce(Buffer.from(JSON.stringify(credentialsFileData)))
-
-			const genericSpy = jest.spyOn(LoginAuthenticator.prototype, 'authenticateGeneric')
-
-			const loginAuthenticator = setupAuthenticator()
-			const requestConfig = {}
-
-			const response = await loginAuthenticator.authenticate(requestConfig)
-
-			expect(response.headers.Authorization).toEqual('Bearer access token')
-			expect(genericSpy).toBeCalledTimes(1)
-		})
-	})
-
-	describe('authenticateGeneric', () => {
 		it('refreshes token when necessary', async () => {
 			readFileMock.mockReturnValueOnce(Buffer.from(JSON.stringify(refreshableCredentialsFileData)))
 
 			const loginAuthenticator = setupAuthenticator()
-			const requestConfig = {}
 
-			const response = await loginAuthenticator.authenticate(requestConfig)
-
-			expect(response.headers.Authorization).toEqual('Bearer access token')
+			expect(await loginAuthenticator.authenticate()).toStrictEqual({ Authorization: 'Bearer access token' })
 
 			expect(postMock).toHaveBeenCalledTimes(1)
 			const postData = postMock.mock.calls[0][1]
@@ -463,7 +442,7 @@ describe('LoginAuthenticator', () => {
 			expect(postData).toMatch(/\bclient_id=client-id\b/)
 			expect(postData).toEqual(expect.stringContaining(`refresh_token=${refreshToken}`))
 			const postConfig = postMock.mock.calls[0][2]
-			expect(postConfig?.headers['Content-Type']).toBe('application/x-www-form-urlencoded')
+			expect(postConfig?.headers?.['Content-Type']).toBe('application/x-www-form-urlencoded')
 
 			expect(readFileMock).toHaveBeenCalledTimes(2)
 			expect(readFileMock).toHaveBeenCalledWith(credentialsFilename)
@@ -474,9 +453,8 @@ describe('LoginAuthenticator', () => {
 		it('includes User-Agent on refresh', async () => {
 			readFileMock.mockReturnValueOnce(Buffer.from(JSON.stringify(refreshableCredentialsFileData)))
 			const loginAuthenticator = setupAuthenticator()
-			const requestConfig = {}
 
-			await loginAuthenticator.authenticate(requestConfig)
+			await loginAuthenticator.authenticate()
 
 			expect(postMock).toHaveBeenCalledTimes(1)
 			expect(postMock).toHaveBeenCalledWith(
@@ -495,13 +473,11 @@ describe('LoginAuthenticator', () => {
 			postMock.mockResolvedValueOnce(tokenResponse)
 
 			const loginAuthenticator = setupAuthenticator()
-			const requestConfig = {}
 
-			const promise = loginAuthenticator.authenticate(requestConfig)
+			const promise = loginAuthenticator.authenticate()
 			await imitateBrowser()
-			const response = await promise
 
-			expect(response.headers.Authorization).toEqual('Bearer access token')
+			expect(await promise).toStrictEqual({ Authorization: 'Bearer access token' })
 
 			expect(postMock).toHaveBeenCalledTimes(2)
 			const postData = postMock.mock.calls[0][1]
@@ -509,7 +485,7 @@ describe('LoginAuthenticator', () => {
 			expect(postData).toMatch(/\bclient_id=client-id\b/)
 			expect(postData).toEqual(expect.stringContaining(`refresh_token=${refreshToken}`))
 			const postConfig = postMock.mock.calls[0][2]
-			expect(postConfig?.headers['Content-Type']).toBe('application/x-www-form-urlencoded')
+			expect(postConfig?.headers?.['Content-Type']).toBe('application/x-www-form-urlencoded')
 			expect(postMock).toHaveBeenCalledWith('https://example.com/oauth-in-url/token', expect.anything(), expect.anything())
 			const postData2 = postMock.mock.calls[1][1]
 			expect(postData2).toMatch(/\bgrant_type=authorization_code\b/)
@@ -518,7 +494,7 @@ describe('LoginAuthenticator', () => {
 			expect(postData2).toMatch(/\bcode=auth-code\b/)
 			expect(postData2).toMatch(/\bredirect_uri=http%3A%2F%2Flocalhost%3A7777%2Ffinish\b/)
 			const postConfig2 = postMock.mock.calls[1][2]
-			expect(postConfig2?.headers['Content-Type']).toBe('application/x-www-form-urlencoded')
+			expect(postConfig2?.headers?.['Content-Type']).toBe('application/x-www-form-urlencoded')
 
 			expect(mockFinishResponse.send).toHaveBeenCalledTimes(1)
 			expect(mockFinishResponse.send).toHaveBeenCalledWith(expect.stringContaining('You can close the window.'))
@@ -531,13 +507,11 @@ describe('LoginAuthenticator', () => {
 
 		it('logs in not logged in', async () => {
 			const loginAuthenticator = setupAuthenticator()
-			const requestConfig = {}
 
-			const promise = loginAuthenticator.authenticate(requestConfig)
+			const promise = loginAuthenticator.authenticate()
 			await imitateBrowser()
-			const response = await promise
 
-			expect(response.headers.Authorization).toEqual('Bearer access token')
+			expect(await promise).toStrictEqual({ Authorization: 'Bearer access token' })
 
 			expect(getPortMock).toHaveBeenCalledTimes(1)
 			expect(getPortMock).toHaveBeenCalledWith({ port: [61973, 61974, 61975] })
@@ -564,7 +538,7 @@ describe('LoginAuthenticator', () => {
 			expect(postData).toMatch(/\bcode=auth-code\b/)
 			expect(postData).toMatch(/\bredirect_uri=http%3A%2F%2Flocalhost%3A7777%2Ffinish\b/)
 			const postConfig = postMock.mock.calls[0][2]
-			expect(postConfig?.headers['Content-Type']).toBe('application/x-www-form-urlencoded')
+			expect(postConfig?.headers?.['Content-Type']).toBe('application/x-www-form-urlencoded')
 
 			expect(mockFinishResponse.send).toHaveBeenCalledTimes(1)
 			expect(mockFinishResponse.send).toHaveBeenCalledWith(expect.stringContaining('You can close the window.'))

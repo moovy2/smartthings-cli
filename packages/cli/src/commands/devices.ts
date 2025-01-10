@@ -7,6 +7,7 @@ import {
 	outputItemOrList,
 	OutputItemOrListConfig,
 	TableFieldDefinition,
+	withLocationAndRoom,
 	withLocationsAndRooms,
 	WithNamedRoom,
 } from '@smartthings/cli-lib'
@@ -15,7 +16,8 @@ import { buildTableOutput } from '../lib/commands/devices-util'
 
 
 export default class DevicesCommand extends APICommand<typeof DevicesCommand.flags> {
-	static description = 'list all devices available in a user account or retrieve a single device'
+	static description = 'list all devices available in a user account or retrieve a single device' +
+		this.apiDocsURL('getDevices', 'getDevice')
 
 	static flags = {
 		...APICommand.flags,
@@ -64,7 +66,7 @@ export default class DevicesCommand extends APICommand<typeof DevicesCommand.fla
 			multiple: true,
 		}),
 		verbose: Flags.boolean({
-			description: 'include location name in output',
+			description: 'include location and room name in output',
 			char: 'v',
 		}),
 	}
@@ -77,6 +79,7 @@ export default class DevicesCommand extends APICommand<typeof DevicesCommand.fla
 	async run(): Promise<void> {
 		// type that includes extra fields sometimes included when requested via command line flags
 		type OutputDevice = Device & WithNamedRoom & Pick<DeviceStatus, 'healthState'>
+
 		const listTableFieldDefinitions: TableFieldDefinition<OutputDevice>[] = ['label', 'name', 'type', 'deviceId']
 
 		if (this.flags.verbose) {
@@ -121,16 +124,17 @@ export default class DevicesCommand extends APICommand<typeof DevicesCommand.fla
 				return devices
 			},
 			async id => {
+				let chosenDevice: OutputDevice = await this.client.devices.get(id, deviceGetOptions)
+				if (this.flags.verbose) {
+					chosenDevice = await withLocationAndRoom(this.client, chosenDevice)
+				}
 				// Note -- we have to do this explicitly because the API does not honor the includeHealth parameter
 				// for individual devices
 				if (this.flags.health) {
-					const [device, healthState] = await Promise.all([
-						this.client.devices.get(id, deviceGetOptions),
-						this.client.devices.getHealth(id),
-					])
-					return { ...device, healthState }
+					const healthState = await this.client.devices.getHealth(id)
+					chosenDevice = { ...chosenDevice, healthState }
 				}
-				return this.client.devices.get(id, deviceGetOptions)
+				return chosenDevice
 			},
 		)
 	}

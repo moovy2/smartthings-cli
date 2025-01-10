@@ -64,7 +64,8 @@ function parseDeviceCommand(str: string, componentId?: string, capabilityId?: st
 }
 
 export default class DeviceCommandsCommand extends APICommand<typeof DeviceCommandsCommand.flags> {
-	static description = 'execute a device command'
+	static description = 'execute a device command' +
+		this.apiDocsURL('executeDeviceCommands')
 
 	static flags = {
 		...APICommand.flags,
@@ -124,7 +125,7 @@ $ smartthings devices:commands 00000000-0000-0000-0000-000000000000 'switchLevel
 			}
 
 			if (cmd.component === '') {
-				this.abort('Command aborted')
+				this.cancel()
 			}
 		}
 		return cmd
@@ -157,7 +158,7 @@ $ smartthings devices:commands 00000000-0000-0000-0000-000000000000 'switchLevel
 			}
 
 			if (cmd.capability === '') {
-				this.abort('Command aborted')
+				this.cancel()
 			}
 		} else {
 			cmd.capability = component.capabilities[0].id
@@ -199,7 +200,7 @@ $ smartthings devices:commands 00000000-0000-0000-0000-000000000000 'switchLevel
 			}
 
 			if (cmd.command === '') {
-				this.abort('Command aborted')
+				this.cancel()
 			}
 
 			const command = capability.commands[cmd.command]
@@ -212,13 +213,13 @@ $ smartthings devices:commands 00000000-0000-0000-0000-000000000000 'switchLevel
 				})).arguments
 
 				if (input === '') {
-					this.abort('Command aborted')
+					this.cancel()
 				}
 
 				cmd.arguments = parseArguments(input)
 			}
 		} else {
-			this.abort('Capability has no commands')
+			this.cancel('Capability has no commands')
 		}
 		return cmd
 	}

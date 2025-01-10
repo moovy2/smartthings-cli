@@ -5,8 +5,15 @@ import JSZip from 'jszip'
 
 import { outputItem, OutputItemConfig, readFile } from '@smartthings/cli-lib'
 
-import { buildTestFileMatchers, processConfigFile, processFingerprintsFile, processProfiles,
-	processSrcDir, resolveProjectDirName } from '../../../lib/commands/drivers/package-util'
+import {
+	buildTestFileMatchers,
+	processConfigFile,
+	processFingerprintsFile,
+	processProfiles,
+	processSearchParametersFile,
+	processSrcDir,
+	resolveProjectDirName,
+} from '../../../lib/commands/drivers/package-util'
 import { chooseChannel } from '../../../lib/commands/channels-util'
 import { chooseHub } from '../../../lib/commands/drivers-util'
 import { EdgeCommand } from '../../../lib/edge-command'
@@ -14,7 +21,8 @@ import { EdgeDriver } from '@smartthings/core-sdk'
 
 
 export default class PackageCommand extends EdgeCommand<typeof PackageCommand.flags> {
-	static description = 'build and upload an edge package'
+	static description = 'build and upload an edge package' +
+		this.apiDocsURL('uploadDriverPackage')
 
 	static args = [{
 		name: 'projectDirectory',
@@ -38,7 +46,8 @@ export default class PackageCommand extends EdgeCommand<typeof PackageCommand.fl
 		}),
 		assign: Flags.boolean({
 			char: 'a',
-			description: 'prompt for a channel to assign the driver to after upload',
+			description: 'prompt for a channel (or use default if previously specified) to assign the driver to ' +
+				'after upload',
 			exclusive: ['channel', 'build-only'],
 		}),
 		channel: Flags.string({
@@ -48,11 +57,13 @@ export default class PackageCommand extends EdgeCommand<typeof PackageCommand.fl
 		}),
 		install: Flags.boolean({
 			char: 'I',
-			description: 'prompt for hub to install to after assigning it to the channel, implies --assign if --assign or --channel not included',
+			description: 'prompt for hub (or use default if previously specified) to install to after assigning it ' +
+				'to the channel, implies --assign if --assign or --channel not included',
 			exclusive: ['hub', 'build-only'],
 		}),
 		hub: Flags.string({
-			description: 'automatically install driver to specified hub, implies --assign if --assign or --channel not included',
+			description: 'automatically install driver to specified hub, implies --assign if --assign or --channel ' +
+				'not included',
 			exclusive: ['install', 'build-only'],
 			helpValue: '<UUID>',
 		}),
@@ -121,6 +132,7 @@ $ smartthings edge:drivers:package -u driver.zip`]
 			await processConfigFile(projectDirectory, zip)
 
 			await processFingerprintsFile(projectDirectory, zip)
+			await processSearchParametersFile(projectDirectory, zip)
 			const edgeDriverTestDirs = this.stringArrayConfigValue('edgeDriverTestDirs', ['test/**', 'tests/**'])
 			const testFileMatchers = buildTestFileMatchers(edgeDriverTestDirs)
 			if (!await processSrcDir(projectDirectory, zip, testFileMatchers)) {

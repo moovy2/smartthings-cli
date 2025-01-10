@@ -21,7 +21,7 @@ import {
 
 export type ViewPresentationDeviceConfigEntry =
 	Omit<PresentationDeviceConfigEntry, 'component'> & Partial<Pick<PresentationDeviceConfigEntry, 'component'>>
-export interface DeviceView {
+export type DeviceView = {
 	dashboard?: {
 		states: ViewPresentationDeviceConfigEntry[]
 		actions: ViewPresentationDeviceConfigEntry[]
@@ -33,18 +33,18 @@ export interface DeviceView {
 	}
 }
 
-export interface DeviceDefinition extends DeviceProfile {
+export type DeviceDefinition = DeviceProfile & {
 	view?: DeviceView
 }
 
-export interface DeviceDefinitionRequest extends DeviceProfileRequest {
+export type DeviceDefinitionRequest = DeviceProfileRequest & {
 	view?: DeviceView
 }
 
 export const entryValues = (entries: ViewPresentationDeviceConfigEntry[]): string =>
 	entries.map(entry => entry.component ? `${entry.component}/${entry.capability}` : `${entry.capability}`).join('\n')
 
-export interface TableOutputOptions {
+export type TableOutputOptions = {
 	includePreferences?: boolean
 	includeViewInfo?: boolean
 }
@@ -96,7 +96,7 @@ export const buildTableOutput = (tableGenerator: TableGenerator, data: DevicePro
 }
 
 export const chooseDeviceProfile = async (command: APIOrganizationCommand<typeof APIOrganizationCommand.flags>,
-		deviceProfileFromArg?: string, options?: Partial<ChooseOptions>): Promise<string> => {
+		deviceProfileFromArg?: string, options?: Partial<ChooseOptions<DeviceProfile & WithLocales>>): Promise<string> => {
 	const opts = chooseOptionsWithDefaults(options)
 	const config: SelectFromListConfig<DeviceProfile & WithLocales> = {
 		itemName: 'device profile',

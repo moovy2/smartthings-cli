@@ -2,10 +2,14 @@ import { AppListOptions, AppOAuthRequest, AppResponse, AppSettingsResponse, Page
 
 import {
 	APICommand,
+	arrayDef,
+	checkboxDef,
 	ChooseOptions,
 	chooseOptionsWithDefaults,
+	localhostOrHTTPSValidate,
 	selectFromList,
 	SelectFromListConfig,
+	stringDef,
 	stringTranslateToId,
 	TableFieldDefinition,
 	TableGenerator,
@@ -45,7 +49,7 @@ export const tableFieldDefinitions: TableFieldDefinition<AppResponse>[] = [
 
 export const oauthTableFieldDefinitions: TableFieldDefinition<AppOAuthRequest>[] = ['clientName', 'scope', 'redirectUris']
 
-export const chooseApp =  async (command: APICommand<typeof APICommand.flags>, appFromArg?: string, options?: Partial<ChooseOptions>): Promise<string> => {
+export const chooseApp = async (command: APICommand<typeof APICommand.flags>, appFromArg?: string, options?: Partial<ChooseOptions<PagedApp>>): Promise<string> => {
 	const opts = chooseOptionsWithDefaults(options)
 	const config: SelectFromListConfig<PagedApp> = {
 		itemName: 'app',
@@ -85,3 +89,37 @@ export const shortARNorURL = (app: PagedApp & Partial<AppResponse>): string => {
 
 	return uri.length < 96 ? uri : uri.slice(0, 95) + '...'
 }
+
+const availableScopes = [
+	'r:devices:*',
+	'w:devices:*',
+	'x:devices:*',
+	'r:hubs:*',
+	'r:locations:*',
+	'w:locations:*',
+	'x:locations:*',
+	'r:scenes:*',
+	'x:scenes:*',
+	'r:rules:*',
+	'w:rules:*',
+	'r:installedapps',
+	'w:installedapps',
+]
+
+export const oauthAppScopeDef = checkboxDef<string>('Scopes', availableScopes, {
+	helpText: 'More information on OAuth 2 Scopes can be found at:\n' +
+	'  https://www.oauth.com/oauth2-servers/scope/\n\n' +
+	'To determine which scopes you need for the application, see documentation for the individual endpoints you will use in your app:\n' +
+	'  https://developer.smartthings.com/docs/api/public/',
+})
+
+const redirectUriHelpText = 'More information on redirect URIs can be found at:\n' +
+	'  https://www.oauth.com/oauth2-servers/redirect-uris/'
+export const redirectUrisDef = arrayDef(
+	'Redirect URIs',
+	stringDef('Redirect URI', { validate: localhostOrHTTPSValidate, helpText: redirectUriHelpText }),
+	{ minItems: 0, maxItems: 10, helpText: redirectUriHelpText },
+)
+
+export const smartAppHelpText = 'More information on writing SmartApps can be found at\n' +
+	'  https://developer.smartthings.com/docs/connected-services/smartapp-basics'

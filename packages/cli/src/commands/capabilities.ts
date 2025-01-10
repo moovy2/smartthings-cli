@@ -23,7 +23,8 @@ import {
 
 
 export default class CapabilitiesCommand extends APIOrganizationCommand<typeof CapabilitiesCommand.flags> {
-	static description = 'get a specific capability'
+	static description = 'get a specific capability or a list of capabilities' +
+		this.apiDocsURL('listNamespacedCapabilities', 'listCapabilities', 'getCapability')
 
 	static flags = {
 		...APIOrganizationCommand.flags,
@@ -47,6 +48,8 @@ export default class CapabilitiesCommand extends APIOrganizationCommand<typeof C
 		const config: OutputItemOrListConfig<Capability, CapabilitySummaryWithNamespace & WithOrganization> = {
 			primaryKeyName: 'id',
 			sortKeyName,
+			itemName: 'capability',
+			pluralItemName: 'capabilities',
 			listTableFieldDefinitions: ['id', 'version', 'status'],
 			buildTableOutput: (data: Capability) => buildTableOutput(this.tableGenerator, data),
 		}

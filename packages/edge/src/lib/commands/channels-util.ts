@@ -1,4 +1,4 @@
-import { Channel, SmartThingsClient, SubscriberType } from '@smartthings/core-sdk'
+import { Channel, EnrolledChannel, SmartThingsClient, SubscriberType } from '@smartthings/core-sdk'
 
 import {
 	APICommand,
@@ -18,7 +18,13 @@ export const listTableFieldDefinitions: TableFieldDefinition<Channel>[] =
 export const tableFieldDefinitions: TableFieldDefinition<Channel>[] =
 	['channelId', 'name', 'description', 'termsOfServiceUrl', 'createdDate', 'lastModifiedDate']
 
-export interface ChooseChannelOptions extends ChooseOptions {
+/**
+ * Both Channel and Enrolled channel have all the fields necessary for choosing a channel. Using
+ * this allows callers of `chooseChannel` to supply a `listItems` that returns a list of either.
+ */
+export type ChannelChoice = Channel | EnrolledChannel
+
+export type ChooseChannelOptions = ChooseOptions<ChannelChoice> & {
 	includeReadOnly: boolean
 }
 
@@ -31,13 +37,13 @@ export async function chooseChannel(command: APICommand<typeof APICommand.flags>
 		channelFromArg?: string,
 		options?: Partial<ChooseChannelOptions>): Promise<string> {
 	const opts = chooseChannelOptionsWithDefaults(options)
-	const config: SelectFromListConfig<Channel> = {
+	const config: SelectFromListConfig<ChannelChoice> = {
 		itemName: 'channel',
 		primaryKeyName: 'channelId',
 		sortKeyName: 'name',
 	}
 
-	const listItems = (): Promise<Channel[]> => listChannels(command.client, { includeReadOnly: opts.includeReadOnly })
+	const listItems = options?.listItems ?? ((): Promise<ChannelChoice[]> => listChannels(command.client, { includeReadOnly: opts.includeReadOnly }))
 
 	const preselectedId = channelFromArg
 		? (opts.allowIndex
@@ -45,12 +51,18 @@ export async function chooseChannel(command: APICommand<typeof APICommand.flags>
 			: channelFromArg)
 		: undefined
 
-	const configKeyForDefaultValue = opts.useConfigDefault ? 'defaultChannel' : undefined
+	const defaultValue = opts.useConfigDefault
+		? {
+			configKey: 'defaultChannel',
+			getItem: (id: string): Promise<ChannelChoice> => command.client.channels.get(id),
+			userMessage: (channel: ChannelChoice): string => `using previously specified default channel named "${channel.name}" (${channel.channelId})`,
+		}
+		: undefined
 	return selectFromList(command, config,
-		{ preselectedId, listItems, promptMessage, configKeyForDefaultValue })
+		{ preselectedId, listItems, promptMessage, defaultValue })
 }
 
-export interface ListChannelOptions {
+export type ListChannelOptions = {
 	allOrganizations: boolean
 	includeReadOnly: boolean
 	subscriberType?: SubscriberType
@@ -69,11 +81,11 @@ export async function listChannels(client: SmartThingsClient, options?: Partial<
 	return client.channels.list({ includeReadOnly, subscriberType, subscriberId })
 }
 
-export interface WithChannel {
+export type WithChannel = {
 	channelId: string
 }
 
-export interface WithNamedChannel extends WithChannel {
+export type WithNamedChannel = WithChannel & {
 	channelName?: string
 }
 
@@ -83,6 +95,14 @@ export async function withChannelNames<T extends WithChannel>(client: SmartThing
 	if (Array.isArray(input)) {
 		const channels = await listChannels(client, { includeReadOnly: true })
 		const channelNamesById = new Map(channels.map(channel => [channel.channelId, channel.name]))
+
+		for (const inputItem of input) {
+			if (!channelNamesById.get(inputItem.channelId)) {
+				const channelName = (await client.channels.get(inputItem.channelId)).name
+				channelNamesById.set(inputItem.channelId, channelName)
+			}
+		}
+
 		return input.map(input => ({ ...input, channelName: channelNamesById.get(input.channelId) }))
 	}
 
